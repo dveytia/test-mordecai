@@ -1,0 +1,10 @@
+# Don't include large files for elastic search and geonames
+# these are build in the Installing mordecai.ipynb file
+elasticsearch-5.5.2/
+elasticsearch-5.5.2.tar.gz
+geonames_index.tar.gz
+geonames_index/
+mordecai-2.1.0.tar.gz
+
+# Don't include checkpoints because this will track twice
+.ipynb_checkpoints/

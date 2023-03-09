@@ -1,0 +1,20 @@
+# first try with the version of python used in google collab
+conda create --name mordecai_env python=3.9.16 spacy==3.4.0 srsly==2.4.0
+
+# might need to try an older version of python but we'll see
+conda create --name mordecai_env python=3.7 spacy==3.4.0 srsly==2.4.0 thinc==8.1.0
+
+# too many conflicts, try just with python
+conda create --name mordecai_env python=3.7
+conda activate mordecai_env
+cd C:\Users\dveytia\Python-working-folder\test-mordecai
+jupyter-lab
+
+# try with python 3.8
+conda create --name mordecai_env_3.8
+
+## Then in terminal
+C:\Users\dveytia\Anaconda3\envs\mordecai_env_3.8\python.exe -m spacy download en_core_web_lg
+C:\Users\dveytia\Anaconda3\envs\mordecai_env_3.8\python.exe
+>>> from mordecai import Geoparser
+>>> geo.geoparse("I travelled from Oxford to Ottawa")
