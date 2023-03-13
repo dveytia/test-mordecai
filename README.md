@@ -12,21 +12,30 @@ conda activate mordecai_env_3.8
 
 in windows cmd (run as admin)
 
-cd (path to working directory)
-conda env create -f mordecai_env_3.8.yml
-jupyter-lab
+	cd (path to working directory)
+	conda env create -f mordecai_env_3.8.yml
+	conda activate mordecai_env_3.8
+	conda install -c anaconda ipykernel
+	ipython kernel install --user --name=envname
+	jupyter-lab
 
 
-Then in open the file "installing_mordecai.ipynb" and run the installation for mordecai and download the spacy library. Also run the docker commands if needed
+Then in open the file "installing_mordecai.ipynb". In the upper RH corner, select envname as the kernel, and run the installation for mordecai and download the spacy library. Also run the docker commands if needed
 
-in windows cmd -- to test that mordecai works
 
-Ctrl+C (twice to exit jupyter lab)
-(path to conda env python.exe) 
->>> from mordecai import Geoparser
->>> geo = Geoparser()
->>> geo.geoparse("I travelled from Oxford to Ottawa")
->>> exit()
+### Without ipykernel, run from cmd line
+
+Without ipykernel, the code will only run from the windows command line
+
+	Ctrl+C (twice to exit jupyter lab)
+
+	(path to conda env python.exe) 
+
+Now you are running python from the cmd line:
+	from mordecai import Geoparser
+	geo = Geoparser()
+	geo.geoparse("I travelled from Oxford to Ottawa")
+	exit()
 
 (path to conda env python.exe) test-geoparse.py
 
@@ -35,13 +44,17 @@ Ctrl+C (twice to exit jupyter lab)
 
 In Windows cmd (as admin)
 
-conda activate mordecai_env_3.8
+	conda activate mordecai_env_3.8
 
-cd (path to working directory)
+	cd (path to working directory)
 
-docker run -d -p 127.0.0.1:9200:9200 -v (path to wd)\geonames_index:/usr/share/elasticsearch/data elasticsearch:5.5.2
+	docker run -d -p 127.0.0.1:9200:9200 -v (path to wd)\geonames_index:/usr/share/elasticsearch/data elasticsearch:5.5.2
 
-(path to conda env python.exe) (name of .py script to run)
+And then one of the following commands
+
+	(path to conda env python.exe) (name of .py script to run)
+
+	jupyter-lab
 
 
 
