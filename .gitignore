@@ -6,6 +6,7 @@ geonames_index.tar.gz
 geonames_index/
 mordecai-2.1.0.tar.gz
 /*.sqlite
+/data/raw-data/sql-databases/
 
 # Don't include checkpoints because this will track twice
 .ipynb_checkpoints/
