@@ -4,8 +4,38 @@ locally installing and running mordecai from the windows command line
 ## Instructions to make
 
 ### Create an environment
-conda create --name mordecai_env_3.8 python=3.8
-conda activate mordecai_env_3.8
+
+Using Conda
+
+	conda create --name mordecai_env_3.8 python=3.8
+	conda activate mordecai_env_3.8
+
+Or using pip in bash build from scratch
+
+	$ python3 -m venv mordecai_env
+	$ source mordecai_env/bin/activate # in windows cmd it's mordecai_env\Scripts\activate
+
+then install packages
+
+	$ python3 -m pip install ipykernel
+	$ python3 -m pip install mordecai
+	$ python3 -m pip install spacy==2.3
+	$ python3 -m pip install numpy==1.21
+	$ python3 -m pip install h5py==3.8.0
+OR
+
+	$ python3 -m pip install -r requirements.txt
+
+Then use ipykernel to open the environment in jupyter
+
+	$ ipython kernel install --user --name=mordecai_env
+	$ jupyter-lab
+
+Then open juypyter lab and in the upper right hand select the kernel for mordecai_env
+
+### Install packages
+
+In jupyter, run the file: Installing_mordecai.pynb to install the necessary packages and set up docker. Docker must be installed first (see https://docs.docker.com/engine/installation/). 
 
 
 ## Instructions to initialize on new computer
