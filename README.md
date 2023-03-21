@@ -12,23 +12,23 @@ Using Conda
 
 Or using pip in bash build from scratch
 
-	$ python3 -m venv mordecai_env
+	$ python -m venv mordecai_env
 	$ source mordecai_env/bin/activate # in windows cmd it's mordecai_env\Scripts\activate
 
 then install packages
 
-	$ python3 -m pip install ipykernel
-	$ python3 -m pip install mordecai
-	$ python3 -m pip install spacy==2.3
-	$ python3 -m pip install numpy==1.21
-	$ python3 -m pip install h5py==3.8.0
+	$ python -m pip install ipykernel
+	$ python -m pip install mordecai
+	$ python -m pip install spacy==2.3
+	$ python -m pip install numpy==1.21
+	$ python -m pip install h5py==3.8.0
 OR
 
-	$ python3 -m pip install -r requirements.txt
+	$ python -m pip install -r requirements.txt
 
 Then use ipykernel to open the environment in jupyter
 
-	$ ipython kernel install --user --name=mordecai_env
+	$ ipython kernel install --user --name=mordecai_env_3.8
 	$ jupyter-lab
 
 Then open juypyter lab and in the upper right hand select the kernel for mordecai_env
@@ -78,14 +78,17 @@ In Windows cmd (as admin)
 
 	cd (path to working directory)
 
-	docker run -d -p 127.0.0.1:9200:9200 -v (path to wd)\geonames_index:/usr/share/elasticsearch/data elasticsearch:5.5.2
+	docker run -d -p 127.0.0.1:9200:9200 -v (path to wd)\geonames_index:/usr/share/elasticsearch/data elasticsearch:5.5.2 
+    
+Or
 
-And then one of the following commands
+	docker run -d -p 127.0.0.1:9200:9200 -v $(pwd)/geonames_index/:/usr/share/elasticsearch/data elasticsearch:5.5.2
+
+And then one of the following commands:
 
 	(path to conda env python.exe) (name of .py script to run)
 
-	jupyter-lab
-
+	jupyter-lab # then select mordecai_env_3.8 for the kernel
 
 
 
