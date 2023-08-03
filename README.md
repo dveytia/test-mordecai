@@ -85,9 +85,25 @@ Or
 	docker run -d -p 127.0.0.1:9200:9200 -v $(pwd)/geonames_index/:/usr/share/elasticsearch/data elasticsearch:5.5.2
 
 And then one of the following commands:
+	/usr/bin/python3 analyses/01_geoparse-mordecai.py # [path to python interpreter] [path to script] 
 
 	(path to conda env python.exe) (name of .py script to run)
 
+	jupyter-lab # then select mordecai_env_3.8 for the kernel
+
+
+
+### What I'm using in rossinante
+
+	screen -S mordecai
+	conda activate mordecai_env_3.8
+	cd (path to working directory)
+	docker run -d -p 127.0.0.1:9200:9200 -v $(pwd)/geonames_index/:/usr/share/elasticsearch/data elasticsearch:5.5.2
+
+For script in command line
+	/usr/bin/python3 analyses/01_geoparse-mordecai.py # [path to python interpreter] [path to script]
+    
+For working in jupyter lab
 	jupyter-lab # then select mordecai_env_3.8 for the kernel
 
 
