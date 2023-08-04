@@ -22,6 +22,9 @@ then install packages
 	$ python -m pip install spacy==2.3
 	$ python -m pip install numpy==1.21
 	$ python -m pip install h5py==3.8.0
+	$ python -m pip install futures
+
+    
 OR
 
 	$ python -m pip install -r requirements.txt
