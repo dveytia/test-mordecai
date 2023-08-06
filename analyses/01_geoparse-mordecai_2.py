@@ -18,8 +18,8 @@ unseenTxt = '/home/dveytia/test-mordecai/data/raw-data/0_unique_references.txt' 
 relevanceTxt = '/home/dveytia/test-mordecai/data/raw-data/1_document_relevance_13062023.csv'
 testLoc = False # Do I wante to test geoparsing works at beginning of script?
 testSubset = True # Do I want to test this code on a subset of the data?
-testSubsetRows = 10
-num_threads = 2  # Replace this with the desired number of threads
+testSubsetRows = 100
+num_threads = 5  # Replace this with the desired number of threads
 
 
 ################ 1. Test mordecai is working before proceeding ##################
@@ -49,7 +49,7 @@ def flat_result(result):
     df_geo.lon =df_geo.lon.astype(float) #Transforms to float
     df_geo = df_geo.drop_duplicates(['geonameid'],keep= 'last')
     df_geo = df_geo[['word', 'spans','country_predicted', 'country_conf', 'admin1', 'lat','lon', 'country_code3', 'geonameid', 'place_name', 'feature_class', 'feature_code']] 
-    df_geo = pd.concat([id, df_geo], axis=1)
+    #df_geo = pd.concat([id, df_geo], axis=1)
     return df_geo
 
 ############### 3. Read in data and format ####################
@@ -108,28 +108,20 @@ for i in list(range(len(df.index))):
         # Get the result when the task is completed
         result = future.result()
         
-    if bool(result) == True:
-        result_flat = flat_result(result)
-        result_flat.insert(0, 'title', df['title'].iloc[i])
-        result_flat.insert(0, 'duplicate_id', df['duplicate_id'].iloc[i])
-        result_flat.insert(0, 'id', df['id'].iloc[i])
+    if bool(result) == True: # if there is a result
+        if 'geo' in result[0]: # also has to have a geo properties
+            result_flat = flat_result(result)
+            result_flat.insert(0, 'title', df['title'].iloc[i])
+            result_flat.insert(0, 'duplicate_id', df['duplicate_id'].iloc[i])
+            result_flat.insert(0, 'id', df['id'].iloc[i])
         
-        rows.append(result_flat)
+            rows.append(result_flat)
 
-df_clean = pd.DataFrame(rows)
-
-
-
+df_clean = pd.concat(rows) # bind all together
 
 
 print(time.time() - t)  
-print("for")
-print(testSubsetRows)
-print("articles")
 
-## Format the dataframe    
-df_clean = flat_df(df)
-df_clean = df_clean.drop_duplicates(['id','geonameid'],keep= 'last')
 
 ## Check dataframe structure
 print(df_clean.dtypes)

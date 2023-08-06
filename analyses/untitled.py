@@ -1,4 +1,6 @@
-## This version uses ThreadPool but the number of working threads is exceeded
+## This version tries using tensorflow but still the number of threads are high
+
+
 
 ## Import modules
 from mordecai import Geoparser
@@ -6,19 +8,21 @@ import pandas as pd
 import pickle
 import os
 import sqlite3
-from multiprocessing.pool import ThreadPool as Pool
 import time
-
+import tensorflow as tf
+import concurrent.futures
 
 
 ################# 0. SET UP INPUTS #########################################
 unseenTxt = '/home/dveytia/test-mordecai/data/raw-data/0_unique_references.txt' # change to unique_references2.txt?
 relevanceTxt = '/home/dveytia/test-mordecai/data/raw-data/1_document_relevance_13062023.csv'
 testLoc = False # Do I wante to test geoparsing works at beginning of script?
-testSubset = False # Do I want to test this code on a subset of the data?
-testSubsetRows = 10
-pool = Pool(1) # 
+testSubset = True # Do I want to test this code on a subset of the data?
+testSubsetRows = 100
+num_threads = 5  # Replace this with the desired number of threads
 
+tf.config.threading.set_intra_op_parallelism_threads(num_threads)
+tf.config.threading.set_inter_op_parallelism_threads(num_threads)
 
 ################ 1. Test mordecai is working before proceeding ##################
 ## Set up mordecai geoparser
@@ -38,17 +42,17 @@ if testLoc == True:
 def geoparse_text(text):
     return geo.geoparse(text)
 
-## format geoparsed dataframe
-def flat_df(df):
-    df_geo = df[df["geoparse"].str.len() != 0] #subset where geoparse string is not empty
-    df_geo = df_geo.explode('geoparse') #Transforms each element of a list to a row and replicates index and all other columns. When more than one place name appears it creates more than one row.
-    df_geo = pd.concat([df_geo.drop(['geoparse'], axis=1), df_geo['geoparse'].apply(pd.Series)], axis=1) #Extract from dic
+## For flattening the list
+def flat_result(result):
+    df_geo = pd.DataFrame(result)
     df_geo = pd.concat([df_geo.drop(['geo'], axis=1), df_geo['geo'].apply(pd.Series)], axis=1)
     df_geo = df_geo[df_geo['lat'].notnull()] #Removing empty latitude rows
     df_geo.lat = df_geo.lat.astype(float) #Transforms to float
     df_geo.lon =df_geo.lon.astype(float) #Transforms to float
+    df_geo = df_geo.drop_duplicates(['geonameid'],keep= 'last')
+    df_geo = df_geo[['word', 'spans','country_predicted', 'country_conf', 'admin1', 'lat','lon', 'country_code3', 'geonameid', 'place_name', 'feature_class', 'feature_code']] 
+    #df_geo = pd.concat([id, df_geo], axis=1)
     return df_geo
-
 
 ############### 3. Read in data and format ####################
 
@@ -72,7 +76,7 @@ df['text'] = df['title'].astype("str") + ". " + df['abstract'].astype("str") + "
 df['text'] = df.apply(lambda row: (row['title'] + ". " + row['abstract']) if pd.isna(row['text']) else row['text'], axis=1)
 
 # subset to only the columns I need for analysis
-df = df[['id', 'duplicate_id','text']]
+df = df[['id', 'duplicate_id','text','title']]
 
 
 # replace "the United States" with "United States" to avoid returning the virgin islands
@@ -93,24 +97,40 @@ if testSubset == True:
 ###################### 4. Analysis ##############################
 t = time.time()
 
+
+
 ## Geoparse the text 
-if __name__ == '__main__':
-    with pool: # Pool(15) as pool
-        df["geoparse"]=pool.map(geoparse_text,df["text"].astype('str'))
+rows = [] # Initialize an empty list to store the rows
+
+for i in list(range(len(df.index))):
+    
+    text = df["text"].iloc[i]
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        # Submit the geoparsing task and get the future object
+        future = executor.submit(geoparse_text,text)
+        # Get the result when the task is completed
+        result = future.result()
+        
+    if bool(result) == True: # if there is a result
+        if 'geo' in result[0]: # also has to have a geo properties
+            result_flat = flat_result(result)
+            result_flat.insert(0, 'title', df['title'].iloc[i])
+            result_flat.insert(0, 'duplicate_id', df['duplicate_id'].iloc[i])
+            result_flat.insert(0, 'id', df['id'].iloc[i])
+        
+            rows.append(result_flat)
+
+df_clean = pd.concat(rows) # bind all together
+
 
 print(time.time() - t)  
-print("for")
-print(testSubsetRows)
-print("articles")
 
-## Format the dataframe    
-df_clean = flat_df(df)
-df_clean = df_clean.drop_duplicates(['id','geonameid'],keep= 'last')
 
 ## Check dataframe structure
-#print(df_clean.dtypes)
+print(df_clean.dtypes)
 print(df_clean[0:5])
-#df_clean.head(5)
+df_clean.head(5)
 
 
 ################ 5. Write output file ###################
