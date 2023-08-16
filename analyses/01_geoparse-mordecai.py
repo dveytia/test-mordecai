@@ -15,9 +15,11 @@ import time
 unseenTxt = '/home/dveytia/test-mordecai/data/raw-data/0_unique_references.txt' # change to unique_references2.txt?
 relevanceTxt = '/home/dveytia/test-mordecai/data/raw-data/1_document_relevance_13062023.csv'
 testLoc = False # Do I wante to test geoparsing works at beginning of script?
-testSubset = False # Do I want to test this code on a subset of the data?
-testSubsetRows = 10
-pool = Pool(1) # 
+testSubset = True # Do I want to test this code on a subset of the data?
+testSubsetRows = 100
+pool = Pool(1) # set number of working threads
+saveToSqlite = True # do you also want to save results as sqlite files?
+
 
 
 ################ 1. Test mordecai is working before proceeding ##################
@@ -117,3 +119,16 @@ print(df_clean[0:5])
 
 ## Save as a .csv
 df_clean.to_csv('/home/dveytia/test-mordecai/outputs/geoparsed-records.csv', index=False)
+
+if saveToSqlite == True:
+    df_clean['spans'] = df_clean['spans'].astype("string") # convert object to string otherwise won't write
+    database = '/home/dveytia/test-mordecai/outputs/geoparsed-records.sqlite'
+    conn = sqlite3.connect(database)
+    df_clean.to_sql('geoparsedRecords', conn, if_exists='replace', index=False) # - writes the pd.df to SQLIte DB
+    conn.close()
+    
+## To test
+#conn = sqlite3.connect(database)
+#df = pd.read_sql_query("SELECT * from geoparsedRecords", conn)
+#df.head
+#conn.close()

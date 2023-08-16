@@ -100,6 +100,8 @@ And then one of the following commands:
 
 ### What I'm using in rossinante
 
+* Note to check if the docker is already running, use docker ps -a ; and to remove docker rm "random name"
+
 	screen -S mordecai
 	conda activate mordecai_env_3.8
 	cd (path to working directory)
