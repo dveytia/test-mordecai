@@ -16,7 +16,7 @@ unseenTxt = '/home/dveytia/test-mordecai/data/raw-data/0_unique_references.txt' 
 relevanceTxt = '/home/dveytia/test-mordecai/data/raw-data/1_document_relevance_13062023.csv'
 testLoc = False # Do I wante to test geoparsing works at beginning of script?
 testSubset = True # Do I want to test this code on a subset of the data?
-testSubsetRows = 100
+testSubsetRows = 10
 pool = Pool(1) # set number of working threads
 saveToSqlite = True # do you also want to save results as sqlite files?
 
