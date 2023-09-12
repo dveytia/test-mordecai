@@ -24,6 +24,11 @@ then install packages
 	$ python -m pip install h5py==3.8.0
 	$ python -m pip install futures
 	$ python -m pip install torch   
+	$ python -m pip install pip install ipykernel rioxarray
+
+Packages for the gridding
+	$conda install -c conda-forge cartopy
+	$ python -m pip install shapely global_land_maskgeopandas
 
 
     
@@ -106,6 +111,9 @@ And then one of the following commands:
 	conda activate mordecai_env_3.8
 	cd (path to working directory)
 	docker run -d -p 127.0.0.1:9200:9200 -v $(pwd)/geonames_index/:/usr/share/elasticsearch/data elasticsearch:5.5.2
+    
+INSTEAD, try running this to limit the number of cpus that can be used:
+	docker run -d -p 127.0.0.1:9200:9200 -cpus="10.0" -v $(pwd)/geonames_index/:/usr/share/elasticsearch/data elasticsearch:5.5.2
 
 For script in command line
 	/usr/bin/python3 analyses/01_geoparse-mordecai.py # [path to python interpreter] [path to script]
